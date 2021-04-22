@@ -1,5 +1,6 @@
-# eye_movement_project
+## It's a eye movement project for eye movement events detection
 
-## it's a eye movement project for eye movement events detection
 
-# to be done.
+**List**:
+- I-DT
+
