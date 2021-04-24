@@ -1,4 +1,4 @@
-## It's a eye movement project for eye movement events detection
+## Eye movement project for eye movement events detection
 
 
 **List**:
