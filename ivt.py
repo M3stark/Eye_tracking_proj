@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def ivt(data, velocity_threshold):
+def ivt(data, velocity_threshold, delta_t_sec):
     """
 
     :param data:
@@ -33,17 +33,23 @@ def ivt(data, velocity_threshold):
 
     print("\n ---------------- Velocity Threshold Started ---------------- ")
 
-    for i in range(0, length-1):
-        time = data[i+1][0] - data[i][0]
-        distance_x = float(data[i+1][1]) - float(data[i][1])
-        distance_y = float(data[i+1][2]) - float(data[i][2])
-        # Euclidean distance
-        distance_l = math.sqrt(math.pow(distance_x, 2) + math.pow(distance_y, 2))
+    # calculate_delta_t()
+    x_velocity_degree = np.zeros (len (data), np.float)
+    y_velocity_degree = np.zeros (len (data), np.float)
 
-        velocity = distance_l / time
+    for i in range(1, length-1):
+        x_velocity_degree[i] = (data[i][1] - data[i-1][1]) / delta_t_sec
+        y_velocity_degree[i] = (data[i][2] - data[i-1][2]) / delta_t_sec
 
-        if velocity < velocity_threshold:
-            # # 1 is fixation, 2 is saccade
+    # First point is a special case
+    x_velocity_degree[0] = 0
+    y_velocity_degree[0] = 0
+
+    # Calculate VELOCITY of each point
+    for i in range(length):
+        vel = np.sqrt(x_velocity_degree[i]**2 + y_velocity_degree[i]**2)
+
+        if vel < velocity_threshold:
             data[i][4] = 1
             idx = idx + 1
             fixation_counter = fixation_counter + 1
@@ -100,6 +106,3 @@ def fixationGroup(data):
         fixation_centroids.append(_data)
     # print(str(idx) + " Groups detected")
     return fixation_centroids
-
-
-

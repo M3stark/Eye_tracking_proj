@@ -53,8 +53,11 @@ def covert(data,geom):
 #%% load files
 # ——————————————————————————————————————————————————————#
 root = '/Users/mike/PycharmProjects/thresholdBased/etdata'
-dataset = '%s/lund2013' % root
-exp_output = '%s/res_IDT' % root
+# dataset = '%s/lund2013_angle' % root
+dataset = '%s/test' % root
+# dataset = '%s/MFD_500' % root
+exp_output = '%s/rank_kappa' % root
+# exp_output = '%s/500_rank' % root
 
 # Create a directory if 'exp_output' is not exist
 if not (os.path.exists(exp_output)):
@@ -81,7 +84,7 @@ DISPERSION_THRESHOLD = 50
 # ——————————————————————————————————————————————————————#
 # I-VT param.                                           #
 # ——————————————————————————————————————————————————————#
-VELOCITY_THRESHOLD = 600
+VELOCITY_THRESHOLD = 70
 
 # ——————————————————————————————————————————————————————#
 # I-VDT param.                                          #
@@ -123,28 +126,30 @@ for file in tqdm(FILES[:]):
 
     """
         Notes:
-        > In I-DT algorithm and I-VT algorithm, the data we used is in __pixels__,
+        > In I-DT algorithm, the data we used is in __pixels__,
           so if the row data is in __degrees__, may need to call "covert" function.
-        > In I-VDT algorithm, the data we used is in __degrees__.
+        > In I-VDT algorithm and I-VT algorithm, the data we used is in __degrees__.
     """
 
     print(" \n================ Now working on %s ================ " % fname)
     # Coordinate conversion
-    #covert(row, db_config['geom'])
+    #covert(data, db_config['geom'])
 
     # I-DT
     # ------------------------------------------------ #
     #etdata = idt(data, DISPERSION_THRESHOLD)
     # ------------------------------------------------ #
 
+    # print(etdata)
+
     # I-VT
     # ------------------------------------------------ #
-    #etdata = ivt(data, VELOCITY_THRESHOLD)
+    etdata = ivt(data, VELOCITY_THRESHOLD, delta_t_sec)
     # ------------------------------------------------ #
 
     # I-VDT
     # ------------------------------------------------ #
-    etdata = ivdt.classify(data, delta_t_sec)
+    #etdata = ivdt.classify(data, delta_t_sec)
     # ------------------------------------------------ #
 
     # plot the event
