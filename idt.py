@@ -12,13 +12,6 @@ Written on 24,Feb,2021
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-#%% imports
-import time
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Functions
 def get_window_dispersion(etdata, window_start, window_ended):
     """
@@ -125,58 +118,3 @@ def idt(etdata, dispersion_t):
 
     return etdata
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-
-# Test
-#%% load files
-start = time.time()
-
-root = '/Users/mike/PycharmProjects/thresholdBased/etdata/lund2013_RA/'
-file = '%s/Lund2013_S4.npy' % root
-_row = np.load(file)
-row = []
-etdata = []
-for i in range(1, len(_row)):
-    row = list(_row[i])
-    etdata.append(row)
-list1 = list(list(items) for items in list(_row))
-
-# print(data)
-# [0.002, 522.6339, 371.9517, True, 1]
-
-# call the i-dt algorithm
-# dispersion_t = 64
-dispersion_t = 80
-data = idt(_row, dispersion_t)
-# print(data)
-# [0.002, 545.514, 377.5505, True, 1]
-
-end = time.time()
-
-print("IDT cost %ss" % (end - start))
-
-
-
-def plot_event(data):
-    plt.figure(figsize=(10, 4))
-    plt.xlabel('time(s)')
-    plt.title('Dispersion Threshold: %s' % dispersion_t)
-
-    print('Now, plotting events.............................')
-
-    for i in range(len(data) - 3000):
-        if (int(data[i][4]) == 1):
-            plt.scatter(data[i][0], 10, s=50, c='b', marker='|')
-        elif (data[i][4] == 2):
-            plt.scatter(data[i][0], 10, s=50, c='r', marker='|')
-    plt.show()
-
-    # print('plotting completed.............................')
-
-
-# plot_event(data)
-
-#%% save as csv file.
-result_df = pd.DataFrame(data, columns = ['timestamp', 'x_pos', 'y_pos', 'sub', 'events'])
-result_df.to_csv('%s/idt_Lund2013_S4.csv'%root, index=True)

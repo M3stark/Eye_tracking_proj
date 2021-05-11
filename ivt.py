@@ -15,18 +15,6 @@ import math
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from postProcessing import postProcessing
-#%% load data
-root = '/Users/mike/PycharmProjects/thresholdBased/etdata/lund2013_RA'
-file = '%s/Lund2013_S5.npy' % root
-_row = np.load(file)
-row = []
-data = []
-for i in range(1, len(_row)):
-    row = list(_row[i])
-    data.append(row)
-# [9.968, 726.9385, 679.0995, True, 1]
-
 
 def ivt(data, velocity_threshold):
     """
@@ -43,8 +31,7 @@ def ivt(data, velocity_threshold):
     fixation_counter = 0
     saccade_counter = 0
 
-
-    print(" ---------------- Velocity Threshold Started ---------------- ")
+    print("\n ---------------- Velocity Threshold Started ---------------- ")
 
     for i in range(0, length-1):
         time = data[i+1][0] - data[i][0]
@@ -56,16 +43,14 @@ def ivt(data, velocity_threshold):
         velocity = distance_l / time
 
         if velocity < velocity_threshold:
-            # # 1 is fixation, 0 is saccade
+            # # 1 is fixation, 2 is saccade
             data[i][4] = 1
             idx = idx + 1
             fixation_counter = fixation_counter + 1
         else:
-            data[i][4] = 0
+            data[i][4] = 2
             idx = idx + 1
             saccade_counter = saccade_counter + 1
-
-
 
     ##
     # Determine percentages for fixations and saccades
@@ -73,11 +58,10 @@ def ivt(data, velocity_threshold):
     FIX_PER = 100 * fixation_counter / total_points
     SAC_PER = 100 * saccade_counter / total_points
 
-    print(" ---------------- Velocity Threshold Completed ---------------- ")
     print("Total point numbers are: %s" % total_points)
     print("Total fixation detected are: %s, percentage is: %s" % (fixation_counter, FIX_PER))
     print("Total saccade detected are: %s, percentage is: %s" % (saccade_counter, SAC_PER))
-
+    print (" ---------------- Velocity Threshold Completed ---------------- ")
 
     return  data
 
@@ -88,7 +72,7 @@ def fixationGroup(data):
     fixation_group = []
     group_idx = 0
     for j in range(0, length - 1):
-        if (data[j][4] == 0):
+        if (data[j][4] == 2):
 
             if (data[j + 1][4] == 1):
                 group_idx = group_idx + 1
@@ -116,28 +100,6 @@ def fixationGroup(data):
         fixation_centroids.append(_data)
     # print(str(idx) + " Groups detected")
     return fixation_centroids
-
-VELOCITY_THRESHOLD = 520
-
-data = ivt(data, VELOCITY_THRESHOLD)
-# data = postProcessing(data)
-
-#%% plot
-plt.figure(figsize=(10,4))
-plt.xlabel('time(s)')
-
-for i in range(200, len(data)-4000):
-    if(int(data[i][4]) == 1):
-        plt.scatter( data[i][0], 10, s = 50, c = 'b', marker='|')
-    else:
-    # elif(data[i][4] == 2):
-        plt.scatter( data[i][0], 10, s = 50, c = 'r', marker='|')
-plt.show()
-
-
-#%% save as csv file.
-result_df = pd.DataFrame(data, columns = ['fname', 'sub', 'fs', 'rms', 'k'])
-result_df.to_csv('%s/ivt_Lund2013_S5.csv'%root, index=False)
 
 
 
